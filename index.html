@@ -2,34 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>My Dressing App</title>
+    <title>Digital Dressing Room</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-/* Fix collisions between "Add to wardrobe" and "Filter all" on small screens */
-@media (max-width: 600px) {
-    .filters {
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: flex-start;
-    }
-    .filters > span,
-    .filters > div,
-    .filters button {
-        width: 100%;
-    }
-    .filters select {
-        width: 100%;
-    }
-    .section-footer {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .section-footer .btn {
-        width: 100%;
-        text-align: center;
+/* ---------------------------------------------- */
+/* GLOBAL FIXES + CENTERING                        */
+/* ---------------------------------------------- */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-top: 20px;
+    width: 100%;
+    justify-items: center;   /* Center horizontally */
+    align-items: start;      /* Align top edge */
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+        justify-items: stretch;   /* Full width on phones */
     }
 }
+
+/* Make cards centered and equal size */
+.card {
+    max-width: 620px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ---------------------------------------------- */
+/* ORIGINAL DESIGN                                */
+/* ---------------------------------------------- */
 
 :root {
     --bg: #050816;
@@ -47,434 +54,383 @@
 }
 
 * {
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
     background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
     min-height: 100vh;
+    padding: 16px;
     color: var(--text);
     display: flex;
     justify-content: center;
-    padding: 16px;
 }
 
 .app {
     width: 100%;
-    max-width: 1200px;
-    background: linear-gradient(145deg, rgba(15,23,42,.96), rgba(17,24,39,.98));
+    max-width: 1250px;
+    background: linear-gradient(145deg, rgba(15,23,42,.95), rgba(17,24,39,.97));
     border-radius: 28px;
-    padding: 20px;
+    padding: 18px;
     box-shadow: var(--shadow-soft);
-    border:1px solid rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.12);
     backdrop-filter: blur(18px);
 }
 
 header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 14px;
 }
 
 .logo-circle {
-    width:40px;
-    height:40px;
-    border-radius:999px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:radial-gradient(circle at 30% 0, #fed7aa 0, #f97316 35%, #7c2d12 90%);
-    box-shadow:0 0 25px rgba(249,115,22,.7);
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 0, #fed7aa 0, #f97316 40%, #7c2d12 100%);
+    box-shadow: 0 0 28px rgba(249,115,22,.7);
 }
 
 .logo-circle span {
-    font-weight:800;
-    color:#020617;
+    font-weight: 800;
+    color: #020617;
+    font-size: 1.3rem;
 }
 
 .user-bar {
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-    align-items:center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .input {
-    background:var(--bg-soft);
-    padding:6px 12px;
-    border-radius:999px;
-    border:1px solid rgba(148,163,184,.4);
-    display:flex;
-    align-items:center;
-    gap:8px;
+    background: var(--bg-soft);
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(148,163,184,.4);
 }
 
 .input input {
-    background:none;
-    border:none;
-    outline:none;
-    color:var(--text);
-    min-width:120px;
+    background: none;
+    border: none;
+    color: var(--text);
+    outline: none;
+    min-width: 140px;
+    font-size: .9rem;
 }
 
 .btn {
-    padding:7px 16px;
-    border-radius:999px;
-    cursor:pointer;
-    border:none;
-    text-transform:uppercase;
-    font-weight:600;
-    font-size:.8rem;
-    white-space:nowrap;
+    padding: 7px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: .8rem;
 }
 
 .btn-primary {
-    background:linear-gradient(135deg,#f97316,#fb923c);
-    color:#020617;
-    box-shadow:0 0 12px rgba(249,115,22,.7);
-}
-.btn-primary:hover {
-    box-shadow:0 0 22px rgba(249,115,22,1);
-    transform:translateY(-1px);
-}
-.btn-ghost {
-    background:none;
-    color:var(--muted);
-    border:1px solid rgba(148,163,184,.3);
+    background: linear-gradient(135deg,#f97316,#fb923c);
+    color: #020617;
+    box-shadow: 0 0 12px rgba(249,115,22,.8);
 }
 
 .pill {
-    font-size:.7rem;
-    padding:3px 9px;
-    border-radius:999px;
-    background:rgba(15,23,42,.9);
-    border:1px solid rgba(148,163,184,.25);
-    color:var(--muted);
+    background: rgba(15,23,42,.85);
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--muted);
+    border: 1px solid rgba(148,163,184,.3);
+    font-size: .75rem;
 }
 
-.grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-    margin-top:16px;
-}
-@media (max-width:900px) {
-    .grid { grid-template-columns:1fr; }
-}
-
+/* Card styling */
 .card {
-    background:var(--bg-softer);
-    padding:16px;
-    border-radius:20px;
-    border:1px solid rgba(255,255,255,.12);
-    position:relative;
+    background: var(--bg-softer);
+    padding: 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.1);
 }
 
 .card-header {
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    align-items:center;
-    margin-bottom:10px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
+/* Forms */
 .form-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
-@media (max-width:600px) {
-    .form-grid { grid-template-columns:1fr; }
-}
-
-.form-group {
-    display:flex;
-    flex-direction:column;
-    gap:4px;
+@media (max-width:650px) {
+    .form-grid { grid-template-columns: 1fr; }
 }
 
 .form-group label {
-    font-size:.8rem;
-    color:var(--muted);
+    font-size: .8rem;
+    color: var(--muted);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-    background:var(--bg-soft);
-    border:1px solid rgba(148,163,184,.45);
-    border-radius:var(--radius-sm);
-    padding:6px 7px;
-    color:var(--text);
-    font-size:.85rem;
-    outline:none;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color:var(--accent);
-    box-shadow:0 0 0 1px rgba(249,115,22,.4);
-}
-
-.section-footer {
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:10px;
-    align-items:center;
-}
-
-.filters {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:10px 0;
-    font-size:.8rem;
+    background: var(--bg-soft);
+    border: 1px solid rgba(148,163,184,.45);
+    color: var(--text);
+    padding: 6px 7px;
+    border-radius: var(--radius-sm);
+    font-size: .85rem;
 }
 
 .list {
-    max-height:320px;
-    overflow:auto;
-    margin-top:8px;
-}
-.list-empty {
-    opacity:.7;
-    font-size:.85rem;
+    max-height: 340px;
+    overflow: auto;
+    margin-top: 10px;
 }
 
 .item-card,
 .outfit-card {
-    display:grid;
-    grid-template-columns:1fr auto;
-    background:rgba(15,23,42,.85);
-    padding:10px;
-    border-radius:14px;
-    margin-bottom:8px;
-    border:1px solid rgba(148,163,184,.22);
-}
-@media (max-width:480px) {
-    .item-card,
-    .outfit-card { grid-template-columns:1fr; }
+    display: grid;
+    grid-template-columns: 1fr auto;
+    background: rgba(15,23,42,.88);
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(148,163,184,.25);
 }
 
 .item-thumb {
-    width:52px;
-    height:52px;
-    border-radius:14px;
-    overflow:hidden;
-    background:radial-gradient(circle at top, rgba(148,163,184,.6), rgba(15,23,42,1));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:.7rem;
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(255,255,255,.08);
 }
 
 .item-thumb img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .btn-small {
-    font-size:.7rem;
-    padding:3px 10px;
-    border-radius:999px;
-    background:rgba(15,23,42,.9);
-    color:#ccc;
+    padding: 3px 10px;
+    font-size: .7rem;
+    border-radius: 999px;
+    background: rgba(15,23,42,.95);
+    color: #ddd;
     border:1px solid rgba(148,163,184,.4);
     cursor:pointer;
 }
+
 .btn-small.danger {
-    border-color:rgba(239,68,68,.8);
+    border-color: rgba(239,68,68,.8);
     color:#fecaca;
 }
 
 .outfit-select {
     width:100%;
-    min-height:95px;
-    border-radius:var(--radius-sm);
-    border:1px solid rgba(148,163,184,.45);
-    background:var(--bg-soft);
-    padding:6px 7px;
-    color:var(--text);
-    font-size:.85rem;
+    min-height: 100px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid rgba(148,163,184,.45);
+    padding: 6px;
 }
 
-.hidden { display:none !important; }
+.hidden {
+    display:none !important;
+}
 </style>
 </head>
 
 <body>
+
 <div class="app">
-    <header>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div class="logo-circle"><span>D</span></div>
-            <div>
-                <h2>Digital Dressing Room</h2>
-                <p style="opacity:.7; font-size:.85rem;">Your wardrobe, everywhere you go</p>
-            </div>
+
+<header>
+    <div style="display:flex;align-items:center;gap:10px;">
+        <div class="logo-circle"><span>D</span></div>
+        <div>
+            <h2 style="font-size:1.3rem;font-weight:700;">Digital Dressing Room</h2>
+            <p style="opacity:.7;font-size:.85rem;">Your wardrobe anywhere</p>
+        </div>
+    </div>
+
+    <div class="user-bar">
+        <div class="input">
+            <span>@</span>
+            <input id="usernameInput" type="text" placeholder="username" />
+        </div>
+        <button class="btn btn-primary" id="loginBtn">Enter</button>
+        <span class="pill">Current: <strong id="currentUserLabel">none</strong></span>
+    </div>
+</header>
+
+<div id="appContent" class="grid hidden">
+
+    <!-- LEFT COLUMN: ITEMS -->
+    <section class="card">
+        <div class="card-header">
+            <h3>Add Wearables</h3>
         </div>
 
-        <div class="user-bar">
-            <div class="input">
-                <span>@</span>
-                <input id="usernameInput" type="text" placeholder="username" />
-            </div>
-            <button class="btn btn-primary" id="loginBtn">Enter</button>
-            <span class="pill">Current: <strong id="currentUserLabel">none</strong></span>
-        </div>
-    </header>
+        <form id="addItemForm">
+            <div class="form-grid">
 
-    <div id="appContent" class="grid hidden">
-
-        <!-- LEFT SIDE – ITEMS -->
-        <section class="card">
-            <div class="card-header">
-                <h3>Add Wearables</h3>
-                <span style="opacity:.7; font-size:.8rem;">Wardrobe</span>
-            </div>
-
-            <form id="addItemForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="itemName">Item name *</label>
-                        <input id="itemName" type="text" required placeholder="Black hoodie, blue jeans..." />
-                    </div>
-                    <div class="form-group">
-                        <label for="itemCategory">Category *</label>
-                        <select id="itemCategory" required>
-                            <option value="">Select</option>
-                            <option value="Top">Top</option>
-                            <option value="Bottom">Bottom</option>
-                            <option value="Shoes">Shoes</option>
-                            <option value="Outerwear">Outerwear</option>
-                            <option value="Accessory">Accessory</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="itemColor">Color / pattern</label>
-                        <input id="itemColor" type="text" placeholder="Black, white, floral..." />
-                    </div>
-                    <div class="form-group">
-                        <label for="itemSeason">Season</label>
-                        <select id="itemSeason">
-                            <option value="">Any</option>
-                            <option value="All year">All year</option>
-                            <option value="Summer">Summer</option>
-                            <option value="Winter">Winter</option>
-                            <option value="Spring">Spring</option>
-                            <option value="Autumn">Autumn</option>
-                        </select>
-                    </div>
-                    <!-- New: file input for phone library / camera -->
-                    <div class="form-group">
-                        <label for="itemImageFile">Picture from phone library (optional)</label>
-                        <input id="itemImageFile" type="file" accept="image/*" />
-                    </div>
-                    <!-- Still keep URL option -->
-                    <div class="form-group">
-                        <label for="itemImageUrl">Image URL (optional)</label>
-                        <input id="itemImageUrl" type="url" placeholder="https://..." />
-                    </div>
-                    <div class="form-group">
-                        <label for="itemNotes">Notes</label>
-                        <textarea id="itemNotes" placeholder="Occasion, fit, fabric..."></textarea>
-                    </div>
+                <div class="form-group">
+                    <label>Item name *</label>
+                    <input id="itemName" type="text" required />
                 </div>
 
-                <div class="section-footer">
-                    <div class="hint" style="font-size:.75rem; color:var(--muted);">
-                        Tip: you can always delete & re-add to edit.
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add to Wardrobe</button>
-                </div>
-            </form>
-
-            <div class="filters">
-                <span>Your wardrobe</span>
-                <div>
-                    <label for="filterCategory" style="margin-right:4px;">Filter</label>
-                    <select id="filterCategory">
-                        <option value="all">All</option>
-                        <option value="Top">Top</option>
-                        <option value="Bottom">Bottom</option>
-                        <option value="Shoes">Shoes</option>
-                        <option value="Outerwear">Outerwear</option>
-                        <option value="Accessory">Accessory</option>
-                        <option value="Other">Other</option>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="itemCategory" required>
+                        <option value="">Select</option>
+                        <option>Top</option>
+                        <option>Bottom</option>
+                        <option>Shoes</option>
+                        <option>Outerwear</option>
+                        <option>Accessory</option>
+                        <option>Other</option>
                     </select>
                 </div>
-            </div>
 
-            <div id="itemsList" class="list">
-                <p class="list-empty">No items yet</p>
-            </div>
-        </section>
-
-        <!-- RIGHT SIDE – OUTFITS -->
-        <section class="card">
-            <div class="card-header">
-                <h3>Create Outfits</h3>
-                <span style="opacity:.7; font-size:.8rem;">Looks</span>
-            </div>
-
-            <form id="addOutfitForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="outfitName">Outfit name *</label>
-                        <input id="outfitName" type="text" required placeholder="Casual Friday, Night out..." />
-                    </div>
-                    <div class="form-group">
-                        <label for="outfitMood">Mood / occasion</label>
-                        <input id="outfitMood" type="text" placeholder="Work, party, cozy at home..." />
-                    </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <input id="itemColor" type="text" />
                 </div>
 
-                <div class="form-group" style="margin-top:8px;">
-                    <label for="outfitItems">Choose items for this outfit *</label>
-                    <select id="outfitItems" class="outfit-select" multiple></select>
+                <div class="form-group">
+                    <label>Season</label>
+                    <select id="itemSeason">
+                        <option value="">Any</option>
+                        <option>All year</option>
+                        <option>Summer</option>
+                        <option>Winter</option>
+                        <option>Spring</option>
+                        <option>Autumn</option>
+                    </select>
                 </div>
 
-                <div class="section-footer">
-                    <div class="hint" style="font-size:.75rem; color:var(--muted);">
-                        Hold <span style="color:var(--accent);">Ctrl</span> or <span style="color:var(--accent);">Cmd</span> to select multiple.
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Outfit</button>
+                <!-- PHONE PICTURE INPUT -->
+                <div class="form-group">
+                    <label>Picture (phone library)</label>
+                    <input id="itemImageFile" type="file" accept="image/*" />
                 </div>
-            </form>
 
-            <div class="filters">
-                <span>Saved outfits</span>
-                <button class="btn-ghost btn" id="clearOutfitsBtn">Clear all</button>
+                <div class="form-group">
+                    <label>Image URL (optional)</label>
+                    <input id="itemImageUrl" type="url" placeholder="https://..." />
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="itemNotes"></textarea>
+                </div>
+
             </div>
 
-            <div id="outfitsList" class="list">
-                <p class="list-empty">No outfits saved</p>
+            <div class="section-footer" style="margin-top:12px;">
+                <div style="opacity:.7;font-size:.75rem;">Tip: You can delete & re-add items to edit them.</div>
+                <button class="btn btn-primary" type="submit">Add to Wardrobe</button>
             </div>
-        </section>
+        </form>
 
-    </div>
-</div>
+        <div class="filters" style="margin-top:16px;">
+            <span>Your wardrobe</span>
+            <div>
+                <label style="margin-right:4px;">Filter</label>
+                <select id="filterCategory">
+                    <option value="all">All</option>
+                    <option>Top</option>
+                    <option>Bottom</option>
+                    <option>Shoes</option>
+                    <option>Outerwear</option>
+                    <option>Accessory</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
 
+        <div id="itemsList" class="list">
+            <p class="list-empty">No items yet</p>
+        </div>
+    </section>
+
+
+    <!-- RIGHT COLUMN: OUTFITS -->
+    <section class="card">
+        <div class="card-header">
+            <h3>Create Outfits</h3>
+        </div>
+
+        <form id="addOutfitForm">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Outfit name *</label>
+                    <input id="outfitName" required />
+                </div>
+                <div class="form-group">
+                    <label>Mood / occasion</label>
+                    <input id="outfitMood" />
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:12px;">
+                <label>Choose items *</label>
+                <select id="outfitItems" class="outfit-select" multiple></select>
+            </div>
+
+            <div class="section-footer">
+                <div style="opacity:.7;font-size:.75rem;">
+                    Hold <span style="color:var(--accent);">Ctrl</span> / <span style="color:var(--accent);">Cmd</span> to select multiple
+                </div>
+                <button class="btn btn-primary" type="submit">Save Outfit</button>
+            </div>
+
+        </form>
+
+        <div class="filters" style="margin-top:16px;">
+            <span>Saved outfits</span>
+            <button class="btn-ghost btn" id="clearOutfitsBtn">Clear all</button>
+        </div>
+
+        <div id="outfitsList" class="list">
+            <p class="list-empty">No outfits</p>
+        </div>
+
+    </section>
+
+</div> <!-- END GRID -->
+
+</div> <!-- END APP -->
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
 (function () {
-  // Firebase config (yours)
+  // -----------------------------
+  //  Firebase config (yours)
+  // -----------------------------
   const firebaseConfig = {
     apiKey: "AIzaSyDouH61nzfr7MhefRdD614oAbyrwguhRJg",
     authDomain: "dressing-bb483.firebaseapp.com",
@@ -489,10 +445,18 @@ header {
   const db = firebase.firestore();
   db.settings({ ignoreUndefinedProperties: true });
 
+  // -----------------------------
+  //  App state
+  // -----------------------------
   let currentUser = null;
-  let userData = { items: [], outfits: [] };
+  let userData = {
+    items: [],
+    outfits: []
+  };
 
-  // Helper: read file as base64 data URL (for phone photos)
+  // -----------------------------
+  //  Helper: read file as base64
+  // -----------------------------
   function readFileAsDataURL(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -502,23 +466,43 @@ header {
     });
   }
 
-  // DOM refs
-  const appContent       = document.getElementById("appContent");
-  const usernameInput    = document.getElementById("usernameInput");
-  const currentUserLabel = document.getElementById("currentUserLabel");
-  const loginBtn         = document.getElementById("loginBtn");
+  // -----------------------------
+  //  DOM references
+  // -----------------------------
+  const appContent        = document.getElementById("appContent");
+  const usernameInput     = document.getElementById("usernameInput");
+  const loginBtn          = document.getElementById("loginBtn");
+  const currentUserLabel  = document.getElementById("currentUserLabel");
 
-  const addItemForm      = document.getElementById("addItemForm");
-  const itemsList        = document.getElementById("itemsList");
-  const filterCategory   = document.getElementById("filterCategory");
+  const addItemForm       = document.getElementById("addItemForm");
+  const itemsList         = document.getElementById("itemsList");
+  const filterCategory    = document.getElementById("filterCategory");
 
-  const addOutfitForm    = document.getElementById("addOutfitForm");
-  const outfitsList      = document.getElementById("outfitsList");
-  const outfitItemsSelect= document.getElementById("outfitItems");
-  const clearOutfitsBtn  = document.getElementById("clearOutfitsBtn");
+  const addOutfitForm     = document.getElementById("addOutfitForm");
+  const outfitsList       = document.getElementById("outfitsList");
+  const outfitItemsSelect = document.getElementById("outfitItems");
+  const clearOutfitsBtn   = document.getElementById("clearOutfitsBtn");
 
+  const itemNameInput     = document.getElementById("itemName");
+  const itemCategoryInput = document.getElementById("itemCategory");
+  const itemColorInput    = document.getElementById("itemColor");
+  const itemSeasonSelect  = document.getElementById("itemSeason");
+  const itemImageFile     = document.getElementById("itemImageFile");
+  const itemImageUrlInput = document.getElementById("itemImageUrl");
+  const itemNotesInput    = document.getElementById("itemNotes");
+
+  const outfitNameInput   = document.getElementById("outfitName");
+  const outfitMoodInput   = document.getElementById("outfitMood");
+
+  // -----------------------------
+  //  Firestore helpers
+  // -----------------------------
   function userDocRef() {
     return db.collection("wardrobes").doc(currentUser);
+  }
+
+  async function saveUserData() {
+    await userDocRef().set(userData);
   }
 
   async function loadUser(username) {
@@ -528,12 +512,12 @@ header {
 
     const snap = await userDocRef().get();
     if (snap.exists) {
-      userData = snap.data();
-      if (!userData.items) userData.items = [];
-      if (!userData.outfits) userData.outfits = [];
+      const data = snap.data() || {};
+      userData.items   = data.items   || [];
+      userData.outfits = data.outfits || [];
     } else {
       userData = { items: [], outfits: [] };
-      await userDocRef().set(userData);
+      await saveUserData();
     }
 
     renderItems();
@@ -541,51 +525,54 @@ header {
     renderOutfits();
   }
 
-  async function saveUserData() {
-    await userDocRef().set(userData);
-  }
-
-  // LOGIN
+  // -----------------------------
+  //  Login / username
+  // -----------------------------
   loginBtn.addEventListener("click", async () => {
     let username = (usernameInput.value || "").trim().toLowerCase();
+
+    // allow only safe chars for Firestore doc id
     if (!username || /[^a-z0-9_-]/.test(username)) {
       alert("Username must contain only letters, numbers, _ or -");
       return;
     }
+
     try {
       await loadUser(username);
     } catch (err) {
       console.error("Error loading user:", err);
-      alert("Error loading your dressing.");
+      alert("Error loading your dressing. Check console for details.");
     }
   });
 
-  // ADD ITEM (with phone picture support)
+  // -----------------------------
+  //  Items: Add
+  // -----------------------------
   addItemForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     if (!currentUser) {
-      alert("Please login first.");
+      alert("Please enter a username and press Enter first.");
       return;
     }
 
-    const name        = document.getElementById("itemName").value.trim();
-    const category    = document.getElementById("itemCategory").value;
-    const color       = document.getElementById("itemColor").value.trim();
-    const season      = document.getElementById("itemSeason").value;
-    const imageUrlInp = document.getElementById("itemImageUrl").value.trim();
-    const notes       = document.getElementById("itemNotes").value.trim();
-    const fileInput   = document.getElementById("itemImageFile");
-    const file        = fileInput && fileInput.files ? fileInput.files[0] : null;
+    const name     = itemNameInput.value.trim();
+    const category = itemCategoryInput.value;
+    const color    = itemColorInput.value.trim();
+    const season   = itemSeasonSelect.value;
+    const urlInput = itemImageUrlInput.value.trim();
+    const notes    = itemNotesInput.value.trim();
+    const file     = itemImageFile.files[0];
 
     if (!name || !category) {
-      alert("Name and category are required.");
+      alert("Item name and category are required.");
       return;
     }
 
-    let finalImageUrl = imageUrlInp;
+    let finalImageUrl = urlInput;
 
     try {
-      // If user selected a picture, convert to base64 and use that
+      // If user selected a file from phone / computer, convert to base64
       if (file) {
         finalImageUrl = await readFileAsDataURL(file);
       }
@@ -604,7 +591,7 @@ header {
       await saveUserData();
 
       addItemForm.reset();
-      if (fileInput) fileInput.value = "";
+      itemImageFile.value = "";
 
       renderItems();
       renderOutfitItemOptions();
@@ -614,51 +601,104 @@ header {
     }
   });
 
+  // -----------------------------
+  //  Items: Render list
+  // -----------------------------
   function renderItems() {
-    const filter = filterCategory.value || "all";
-    const items = (userData.items || []).filter(i =>
-      filter === "all" ? true : i.category === filter
+    const filterValue = filterCategory.value || "all";
+    const items = (userData.items || []).filter(item =>
+      filterValue === "all" ? true : item.category === filterValue
     );
 
     itemsList.innerHTML = "";
+
     if (!items.length) {
-      itemsList.innerHTML = "<p class='list-empty'>No items</p>";
+      itemsList.innerHTML = "<p class='list-empty'>No items yet</p>";
       return;
     }
 
     items.forEach(item => {
-      const imgHtml = item.imageUrl
-        ? `<div class="item-thumb"><img src="${item.imageUrl}" alt="${item.name}" /></div>`
-        : `<div class="item-thumb">No image</div>`;
+      const wrapper = document.createElement("div");
+      wrapper.className = "item-card";
+      wrapper.dataset.id = item.id;
 
-      itemsList.innerHTML += `
-        <div class="item-card" data-id="${item.id}">
-          <div>
-            <h4 style="font-size:.9rem; margin-bottom:2px;">${item.name}</h4>
-            <div style="opacity:.75; font-size:.8rem;">
-              ${item.category || ""}${item.color ? " · " + item.color : ""}${item.season ? " · " + item.season : ""}
-            </div>
-            <div style="opacity:.75; font-size:.75rem; margin-top:3px;">
-              ${item.notes || ""}
-            </div>
-          </div>
-          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-            ${imgHtml}
-            <button class="btn-small danger delete-item" data-id="${item.id}">Remove</button>
-          </div>
-        </div>
-      `;
+      const left = document.createElement("div");
+      const title = document.createElement("h4");
+      title.style.fontSize = ".9rem";
+      title.style.marginBottom = "2px";
+      title.textContent = item.name;
+
+      const meta = document.createElement("div");
+      meta.style.opacity = ".75";
+      meta.style.fontSize = ".8rem";
+      const parts = [];
+      if (item.category) parts.push(item.category);
+      if (item.color)    parts.push(item.color);
+      if (item.season)   parts.push(item.season);
+      meta.textContent = parts.join(" · ");
+
+      const notes = document.createElement("div");
+      notes.style.opacity = ".75";
+      notes.style.fontSize = ".75rem";
+      notes.style.marginTop = "3px";
+      notes.textContent = item.notes || "";
+
+      left.appendChild(title);
+      left.appendChild(meta);
+      left.appendChild(notes);
+
+      const right = document.createElement("div");
+      right.style.display = "flex";
+      right.style.flexDirection = "column";
+      right.style.alignItems = "flex-end";
+      right.style.gap = "6px";
+
+      const thumb = document.createElement("div");
+      thumb.className = "item-thumb";
+
+      if (item.imageUrl) {
+        const img = document.createElement("img");
+        img.src = item.imageUrl;
+        img.alt = item.name;
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = "No image";
+        thumb.style.fontSize = ".7rem";
+        thumb.style.display = "flex";
+        thumb.style.alignItems = "center";
+        thumb.style.justifyContent = "center";
+      }
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn-small danger delete-item";
+      delBtn.textContent = "Remove";
+      delBtn.dataset.id = item.id;
+
+      right.appendChild(thumb);
+      right.appendChild(delBtn);
+
+      wrapper.appendChild(left);
+      wrapper.appendChild(right);
+
+      itemsList.appendChild(wrapper);
     });
   }
 
+  // -----------------------------
+  //  Items: Delete
+  // -----------------------------
   itemsList.addEventListener("click", async (e) => {
-    const btn = e.target;
-    if (!btn.classList.contains("delete-item")) return;
-    const id = btn.dataset.id;
-    userData.items = (userData.items || []).filter(i => i.id !== id);
-    (userData.outfits || []).forEach(o => {
-      o.itemIds = (o.itemIds || []).filter(x => x !== id);
+    const target = e.target;
+    if (!target.classList.contains("delete-item")) return;
+
+    const id = target.dataset.id;
+    userData.items = (userData.items || []).filter(item => item.id !== id);
+
+    // Also remove this item from outfits
+    (userData.outfits || []).forEach(outfit => {
+      outfit.itemIds = (outfit.itemIds || []).filter(x => x !== id);
     });
+
     await saveUserData();
     renderItems();
     renderOutfits();
@@ -667,34 +707,45 @@ header {
 
   filterCategory.addEventListener("change", renderItems);
 
-  // OUTFITS
+  // -----------------------------
+  //  Outfits: Options
+  // -----------------------------
   function renderOutfitItemOptions() {
     outfitItemsSelect.innerHTML = "";
     const items = userData.items || [];
+
     if (!items.length) {
-      outfitItemsSelect.innerHTML = `<option disabled>No items yet</option>`;
+      const opt = document.createElement("option");
+      opt.disabled = true;
+      opt.textContent = "No items yet";
+      outfitItemsSelect.appendChild(opt);
       return;
     }
-    items.forEach(i => {
+
+    items.forEach(item => {
       const opt = document.createElement("option");
-      opt.value = i.id;
-      opt.textContent = `${i.name} (${i.category})`;
+      opt.value = item.id;
+      opt.textContent = `${item.name} (${item.category})`;
       outfitItemsSelect.appendChild(opt);
     });
   }
 
+  // -----------------------------
+  //  Outfits: Add
+  // -----------------------------
   addOutfitForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     if (!currentUser) {
-      alert("Please login first.");
+      alert("Please enter a username and press Enter first.");
       return;
     }
 
-    const name = document.getElementById("outfitName").value.trim();
-    const mood = document.getElementById("outfitMood").value.trim();
-    const selected = Array.from(outfitItemsSelect.selectedOptions).map(o => o.value);
+    const name = outfitNameInput.value.trim();
+    const mood = outfitMoodInput.value.trim();
+    const selectedIds = Array.from(outfitItemsSelect.selectedOptions).map(o => o.value);
 
-    if (!name || !selected.length) {
+    if (!name || !selectedIds.length) {
       alert("Outfit name and at least one item are required.");
       return;
     }
@@ -703,60 +754,101 @@ header {
       id: String(Date.now()) + String(Math.random()).slice(2),
       name,
       mood,
-      itemIds: selected
+      itemIds: selectedIds
     };
 
     userData.outfits.push(outfit);
     await saveUserData();
+
     addOutfitForm.reset();
     renderOutfits();
   });
 
+  // -----------------------------
+  //  Outfits: Render
+  // -----------------------------
   function renderOutfits() {
     const outfits = userData.outfits || [];
-    const items   = userData.items || [];
+    const items   = userData.items  || [];
 
     outfitsList.innerHTML = "";
+
     if (!outfits.length) {
       outfitsList.innerHTML = "<p class='list-empty'>No outfits</p>";
       return;
     }
 
-    outfits.forEach(o => {
-      const names = (o.itemIds || []).map(id => {
+    outfits.forEach(outfit => {
+      const card = document.createElement("div");
+      card.className = "outfit-card";
+      card.dataset.id = outfit.id;
+
+      const left = document.createElement("div");
+      const title = document.createElement("h4");
+      title.style.fontSize = ".9rem";
+      title.style.marginBottom = "2px";
+      title.textContent = outfit.name;
+
+      const mood = document.createElement("div");
+      mood.style.opacity = ".75";
+      mood.style.fontSize = ".8rem";
+      mood.textContent = outfit.mood || "";
+
+      const names = (outfit.itemIds || []).map(id => {
         const item = items.find(i => i.id === id);
         return item ? item.name : "(deleted item)";
       });
 
-      outfitsList.innerHTML += `
-        <div class="outfit-card" data-id="${o.id}">
-          <div>
-            <h4 style="font-size:.9rem; margin-bottom:2px;">${o.name}</h4>
-            <div style="opacity:.75; font-size:.8rem;">${o.mood || ""}</div>
-            <div style="opacity:.75; font-size:.75rem; margin-top:3px;">
-              ${names.join(" · ")}
-            </div>
-          </div>
-          <div style="display:flex; align-items:center; justify-content:flex-end;">
-            <button class="btn-small danger delete-outfit" data-id="${o.id}">Delete</button>
-          </div>
-        </div>
-      `;
+      const itemsText = document.createElement("div");
+      itemsText.style.opacity = ".75";
+      itemsText.style.fontSize = ".75rem";
+      itemsText.style.marginTop = "4px";
+      itemsText.textContent = names.join(" · ");
+
+      left.appendChild(title);
+      left.appendChild(mood);
+      left.appendChild(itemsText);
+
+      const right = document.createElement("div");
+      right.style.display = "flex";
+      right.style.alignItems = "center";
+      right.style.justifyContent = "flex-end";
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "btn-small danger delete-outfit";
+      delBtn.textContent = "Delete";
+      delBtn.dataset.id = outfit.id;
+
+      right.appendChild(delBtn);
+
+      card.appendChild(left);
+      card.appendChild(right);
+
+      outfitsList.appendChild(card);
     });
   }
 
+  // -----------------------------
+  //  Outfits: Delete
+  // -----------------------------
   outfitsList.addEventListener("click", async (e) => {
-    const btn = e.target;
-    if (!btn.classList.contains("delete-outfit")) return;
-    const id = btn.dataset.id;
+    const target = e.target;
+    if (!target.classList.contains("delete-outfit")) return;
+
+    const id = target.dataset.id;
     userData.outfits = (userData.outfits || []).filter(o => o.id !== id);
+
     await saveUserData();
     renderOutfits();
   });
 
+  // -----------------------------
+  //  Outfits: Clear all
+  // -----------------------------
   clearOutfitsBtn.addEventListener("click", async () => {
     if (!currentUser) return;
-    if (!confirm("Delete all outfits?")) return;
+    if (!confirm("Delete all outfits for this user?")) return;
+
     userData.outfits = [];
     await saveUserData();
     renderOutfits();
@@ -764,5 +856,6 @@ header {
 
 })();
 </script>
+
 </body>
 </html>

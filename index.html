@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>My Dressing App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+/* Fix collisions between "Add to wardrobe" and "Filter all" on small screens */
+@media (max-width: 600px) {
+    .filters { flex-direction: column; align-items: stretch; justify-content: flex-start; }
+    .filters > span, .filters > div, .filters button { width: 100%; }
+    .filters select { width: 100%; }
+    .section-footer { flex-direction: column; align-items: stretch; }
+    .section-footer .btn { width: 100%; text-align: center; }
+}
+
+:root {
+    --bg: #050816;
+    --bg-soft: #0f172a;
+    --bg-softer: #111827;
+    --accent: #f97316;
+    --accent-soft: rgba(249, 115, 22, 0.18);
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #1f2933;
+    --danger: #ef4444;
+    --radius-lg: 18px;
+    --radius-sm: 10px;
+    --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.9);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:system-ui; }
+
+body {
+    background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+}
+
+.app {
+    width: 100%;
+    max-width: 1200px;
+    background: linear-gradient(145deg, rgba(15,23,42,.96), rgba(17,24,39,.98));
+    border-radius: 28px;
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    border:1px solid rgba(255,255,255,.12);
+}
+
+header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.logo-circle {
+    width:40px; height:40px;
+    border-radius:999px;
+    display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 30% 0, #fed7aa 0, #f97316 35%, #7c2d12 90%);
+    box-shadow:0 0 25px rgba(249,115,22,.7);
+}
+
+.user-bar { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.input { background:var(--bg-soft); padding:6px 12px; border-radius:999px; border:1px solid rgba(148,163,184,.4); display:flex; align-items:center; gap:8px; }
+.input input { background:none; border:none; outline:none; color:var(--text); min-width:120px; }
+
+.btn { padding:7px 16px; border-radius:999px; cursor:pointer; border:none; text-transform:uppercase; font-weight:600; font-size:.8rem; }
+.btn-primary { background:linear-gradient(135deg,#f97316,#fb923c); color:#020617; box-shadow:0 0 12px rgba(249,115,22,.7); }
+.btn-primary:hover { box-shadow:0 0 22px rgba(249,115,22,1); transform:translateY(-1px); }
+.btn-ghost { background:none; color:var(--muted); border:1px solid rgba(148,163,184,.3); }
+
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+@media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+
+.card { background:var(--bg-softer); padding:16px; border-radius:20px; position:relative; border:1px solid rgba(255,255,255,.1); }
+
+.card-header { display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; }
+
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:600px) { .form-grid { grid-template-columns:1fr; } }
+
+.form-group { display:flex; flex-direction:column; gap:4px; }
+.form-group input, .form-group select, .form-group textarea {
+    background:var(--bg-soft); border:1px solid rgba(255,255,255,.2);
+    border-radius:10px; padding:6px; outline:none; color:var(--text);
+}
+
+.section-footer { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+
+.filters { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin:10px 0; }
+
+.list { max-height:320px; overflow:auto; margin-top:8px; }
+.list-empty { opacity:.7; font-size:.85rem; }
+
+.item-card, .outfit-card {
+    display:grid; grid-template-columns:1fr auto;
+    background:rgba(0,0,0,.25); padding:10px;
+    border-radius:12px; margin-bottom:8px;
+    border:1px solid rgba(255,255,255,.15);
+}
+@media (max-width:480px) { .item-card, .outfit-card { grid-template-columns:1fr; } }
+
+.item-thumb { width:52px; height:52px; overflow:hidden; border-radius:12px; background:#222;
+display:flex; align-items:center; justify-content:center; }
+.item-thumb img { width:100%; height:100%; object-fit:cover; }
+
+.btn-small { font-size:.7rem; padding:3px 10px; border-radius:999px;
+background:rgba(0,0,0,.3); color:#ccc; border:1px solid rgba(255,255,255,.2); }
+.btn-small.danger { border-color:#f66; color:#fbb; }
+
+.hidden { display:none !important; }
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+<header>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div class="logo-circle"><span>D</span></div>
+        <div>
+            <h2>Digital Dressing Room</h2>
+            <p style="opacity:.7;">Your wardrobe, everywhere you go</p>
+        </div>
+    </div>
+
+    <div class="user-bar">
+        <div class="input">
+            <span>@</span>
+            <input id="usernameInput" type="text" placeholder="username" />
+        </div>
+        <button class="btn btn-primary" id="loginBtn">Enter</button>
+        <span class="pill">Current: <strong id="currentUserLabel">none</strong></span>
+    </div>
+</header>
+
+<div id="appContent" class="grid hidden">
+
+<!-- LEFT SIDE – ITEMS -->
+<section class="card">
+    <div class="card-header">
+        <h3>Add Wearables</h3>
+        <span style="opacity:.7;">Wardrobe</span>
+    </div>
+
+    <form id="addItemForm">
+        <div class="form-grid">
+            <div class="form-group"><label>Name *</label><input id="itemName" required></div>
+            <div class="form-group">
+                <label>Category *</label>
+                <select id="itemCategory" required>
+                    <option value="">Select</option>
+                    <option>Top</option><option>Bottom</option>
+                    <option>Shoes</option><option>Outerwear</option>
+                    <option>Accessory</option><option>Other</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Color</label><input id="itemColor"></div>
+            <div class="form-group">
+                <label>Season</label>
+                <select id="itemSeason">
+                    <option value="">Any</option><option>Summer</option>
+                    <option>Winter</option><option>Spring</option><option>Autumn</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Image URL</label><input id="itemImageUrl"></div>
+            <div class="form-group"><label>Notes</label><textarea id="itemNotes"></textarea></div>
+        </div>
+
+        <div class="section-footer">
+            <div class="hint">Tip: You can delete & re-add to edit</div>
+            <button class="btn btn-primary">Add to Wardrobe</button>
+        </div>
+    </form>
+
+    <div class="filters">
+        <span>Your Wardrobe</span>
+        <select id="filterCategory">
+            <option value="all">All</option>
+            <option>Top</option><option>Bottom</option>
+            <option>Shoes</option><option>Outerwear</option>
+            <option>Accessory</option><option>Other</option>
+        </select>
+    </div>
+
+    <div id="itemsList" class="list">
+        <p class="list-empty">No items yet</p>
+    </div>
+</section>
+
+<!-- RIGHT SIDE – OUTFITS -->
+<section class="card">
+    <div class="card-header">
+        <h3>Create Outfits</h3>
+        <span style="opacity:.7;">Looks</span>
+    </div>
+
+    <form id="addOutfitForm">
+        <div class="form-grid">
+            <div class="form-group"><label>Name *</label><input id="outfitName" required></div>
+            <div class="form-group"><label>Mood</label><input id="outfitMood"></div>
+        </div>
+
+        <label>Choose items *</label>
+        <select id="outfitItems" multiple class="outfit-select"></select>
+
+        <div class="section-footer">
+            <div class="hint">Hold Ctrl/Cmd to select many</div>
+            <button class="btn btn-primary">Save Outfit</button>
+        </div>
+    </form>
+
+    <div class="filters">
+        <span>Saved outfits</span>
+        <button class="btn-ghost btn" id="clearOutfitsBtn">Clear All</button>
+    </div>
+
+    <div id="outfitsList" class="list">
+        <p class="list-empty">No outfits saved</p>
+    </div>
+</section>
+
+</div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+(function(){
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDouH61nzfr7MhefRdD614oAbyrwguhRJg",
+  authDomain: "dressing-bb483.firebaseapp.com",
+  projectId: "dressing-bb483",
+  storageBucket: "dressing-bb483.appspot.com",
+  messagingSenderId: "1080230425144",
+  appId: "1:1080230425144:web:0b3862ce5612055a4b2ccd",
+  measurementId: "G-W4GGQ6N61C"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+db.settings({ ignoreUndefinedProperties: true });
+
+let currentUser = null;
+let userData = { items: [], outfits: [] };
+
+// DOM
+const appContent = document.getElementById("appContent");
+const usernameInput = document.getElementById("usernameInput");
+const currentUserLabel = document.getElementById("currentUserLabel");
+const loginBtn = document.getElementById("loginBtn");
+
+const addItemForm = document.getElementById("addItemForm");
+const itemsList = document.getElementById("itemsList");
+const filterCategory = document.getElementById("filterCategory");
+
+const addOutfitForm = document.getElementById("addOutfitForm");
+const outfitsList = document.getElementById("outfitsList");
+const outfitItemsSelect = document.getElementById("outfitItems");
+const clearOutfitsBtn = document.getElementById("clearOutfitsBtn");
+
+function userDocRef() {
+    return db.collection("wardrobes").doc(currentUser);
+}
+
+// LOAD USER
+async function loadUser(username){
+    currentUser = username;
+    currentUserLabel.textContent = username;
+    appContent.classList.remove("hidden");
+
+    const doc = await userDocRef().get();
+    if (doc.exists) userData = doc.data();
+    else await userDocRef().set(userData);
+
+    renderItems();
+    renderOutfitItemOptions();
+    renderOutfits();
+}
+
+async function saveUserData(){
+    await userDocRef().set(userData);
+}
+
+// LOGIN
+loginBtn.onclick = async () => {
+    let username = usernameInput.value.trim().toLowerCase();
+
+    if (!username || /[^a-z0-9_-]/.test(username)) {
+        alert("Username must contain only letters, numbers, _ or -");
+        return;
+    }
+
+    await loadUser(username);
+};
+
+// ITEMS
+addItemForm.onsubmit = async (e)=>{
+    e.preventDefault();
+    if(!currentUser) return alert("Login first");
+
+    const item = {
+        id: String(Date.now()) + Math.random().toString().slice(2),
+        name: itemName.value.trim(),
+        category: itemCategory.value,
+        color: itemColor.value.trim(),
+        season: itemSeason.value,
+        imageUrl: itemImageUrl.value.trim(),
+        notes: itemNotes.value.trim()
+    };
+
+    userData.items.push(item);
+    await saveUserData();
+    addItemForm.reset();
+    renderItems();
+    renderOutfitItemOptions();
+};
+
+function renderItems(){
+    const filter = filterCategory.value;
+    let items = userData.items.filter(i => filter==="all" || i.category===filter);
+
+    itemsList.innerHTML = "";
+    if (!items.length){ itemsList.innerHTML = "<p class='list-empty'>No items</p>"; return; }
+
+    items.forEach(item=>{
+        itemsList.innerHTML += `
+        <div class="item-card" data-id="${item.id}">
+            <div>
+                <h4>${item.name}</h4>
+                <div style="opacity:.7;">${item.category} · ${item.color||""} · ${item.season||""}</div>
+                <div style="opacity:.7; font-size:.75rem;">${item.notes||""}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="item-thumb">
+                    ${item.imageUrl ? `<img src="${item.imageUrl}">` : "No Image"}
+                </div>
+                <button class="btn-small danger delete-item" data-id="${item.id}">Remove</button>
+            </div>
+        </div>`;
+    });
+}
+
+itemsList.onclick = async (e)=>{
+    if(!e.target.classList.contains("delete-item")) return;
+    let id = e.target.dataset.id;
+
+    userData.items = userData.items.filter(i=>i.id!==id);
+    userData.outfits.forEach(o=>{
+        o.itemIds = o.itemIds.filter(x=>x!==id);
+    });
+
+    await saveUserData();
+    renderItems();
+    renderOutfits();
+    renderOutfitItemOptions();
+};
+
+filterCategory.onchange = renderItems;
+
+// OUTFITS
+function renderOutfitItemOptions(){
+    outfitItemsSelect.innerHTML = "";
+    userData.items.forEach(i=>{
+        outfitItemsSelect.innerHTML += `<option value="${i.id}">${i.name} (${i.category})</option>`;
+    });
+}
+
+addOutfitForm.onsubmit = async (e)=>{
+    e.preventDefault();
+    if(!currentUser) return alert("Login first");
+
+    let selected = [...outfitItemsSelect.selectedOptions].map(o=>o.value);
+    if(!selected.length) return alert("Select at least 1 item");
+
+    const outfit = {
+        id: Date.now()+""+Math.random(),
+        name: outfitName.value.trim(),
+        mood: outfitMood.value.trim(),
+        itemIds: selected
+    };
+
+    userData.outfits.push(outfit);
+    await saveUserData();
+    addOutfitForm.reset();
+    renderOutfits();
+};
+
+function renderOutfits(){
+    outfitsList.innerHTML = "";
+    if(!userData.outfits.length){ outfitsList.innerHTML="<p class='list-empty'>No outfits</p>"; return; }
+
+    userData.outfits.forEach(o=>{
+        let names = o.itemIds.map(id=>{
+            let item = userData.items.find(i=>i.id===id);
+            return item ? item.name : "(deleted)";
+        });
+
+        outfitsList.innerHTML += `
+        <div class="outfit-card" data-id="${o.id}">
+            <div>
+                <h4>${o.name}</h4>
+                <div style="opacity:.7;">${o.mood||""}</div>
+                <div style="opacity:.7; font-size:.8rem;">${names.join(" · ")}</div>
+            </div>
+            <button class="btn-small danger delete-outfit" data-id="${o.id}">Delete</button>
+        </div>`;
+    });
+}
+
+outfitsList.onclick = async (e)=>{
+    if(!e.target.classList.contains("delete-outfit")) return;
+    let id = e.target.dataset.id;
+
+    userData.outfits = userData.outfits.filter(o=>o.id!==id);
+    await saveUserData();
+    renderOutfits();
+};
+
+clearOutfitsBtn.onclick = async ()=>{
+    if(!currentUser) return;
+    if(!confirm("Delete all outfits?")) return;
+    userData.outfits = [];
+    await saveUserData();
+    renderOutfits();
+};
+
+})();
+</script>
+
+</body>
+</html>
